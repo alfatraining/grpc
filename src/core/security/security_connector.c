@@ -480,6 +480,8 @@ static grpc_security_status ssl_check_peer(grpc_security_connector *sc,
                                            const tsi_peer *peer,
                                            grpc_auth_context **auth_context) {
   /* Check the ALPN. */
+// [ks] - allow disabling of ALPN
+#if TSI_OPENSSL_ALPN_SUPPORT
   const tsi_peer_property *p =
       tsi_peer_get_property_by_name(peer, TSI_SSL_ALPN_SELECTED_PROTOCOL);
   if (p == NULL) {
@@ -490,7 +492,8 @@ static grpc_security_status ssl_check_peer(grpc_security_connector *sc,
     gpr_log(GPR_ERROR, "Invalid ALPN value.");
     return GRPC_SECURITY_ERROR;
   }
-
+// [ks] - allow disabling of ALPN
+#endif // TSI_OPENSSL_ALPN_SUPPORT
   /* Check the peer name if specified. */
   if (peer_name != NULL && !ssl_host_matches_name(peer, peer_name)) {
     gpr_log(GPR_ERROR, "Peer name %s is not in peer certificate", peer_name);
