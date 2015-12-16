@@ -23,12 +23,6 @@ list(APPEND filegroup_census
 
 # ========================================================
 
-list(APPEND filegroup_grpcpp_base
-	${grpcpp_base_public_headers}
-	${grpcpp_base_headers}
-	${grpcpp_base_srcs}
-	)
-
 list(APPEND grpcpp_base_public_headers
 	"${CMAKE_SOURCE_DIR}/include/grpc++/channel.h"
 	"${CMAKE_SOURCE_DIR}/include/grpc++/client_context.h"
@@ -109,6 +103,12 @@ list(APPEND grpcpp_base_srcs
 	"${CMAKE_SOURCE_DIR}/src/cpp/util/status.cc"
 	"${CMAKE_SOURCE_DIR}/src/cpp/util/string_ref.cc"
 	"${CMAKE_SOURCE_DIR}/src/cpp/util/time.cc"
+	)
+
+list(APPEND filegroup_grpcpp_base
+	${grpcpp_base_public_headers}
+	${grpcpp_base_headers}
+	${grpcpp_base_srcs}
 	)
 
 # ========================================================
