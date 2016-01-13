@@ -113,6 +113,29 @@ list(APPEND filegroup_grpcpp_base
 
 # ========================================================
 
+list(APPEND grpcpp_headers
+	"${CMAKE_SOURCE_DIR}/src/cpp/client/secure_credentials.h"
+	"${CMAKE_SOURCE_DIR}/src/cpp/common/secure_auth_context.h"
+	"${CMAKE_SOURCE_DIR}/src/cpp/server/secure_server_credentials.h"
+	)
+
+list(APPEND grpcpp_srcs
+	"${CMAKE_SOURCE_DIR}/src/cpp/client/secure_credentials.cc"
+	"${CMAKE_SOURCE_DIR}/src/cpp/common/auth_property_iterator.cc"
+	"${CMAKE_SOURCE_DIR}/src/cpp/common/secure_auth_context.cc"
+	"${CMAKE_SOURCE_DIR}/src/cpp/common/secure_channel_arguments.cc"
+	"${CMAKE_SOURCE_DIR}/src/cpp/common/secure_create_auth_context.cc"
+	"${CMAKE_SOURCE_DIR}/src/cpp/server/secure_server_credentials.cc"
+	)
+
+list(APPEND filegroup_grpcpp
+	${grpcpp_headers}
+	${grpcpp_srcs}
+	${filegroup_grpcpp_base}
+	)
+
+# ========================================================
+
 list(APPEND grpc_base_public_headers
 	"${CMAKE_SOURCE_DIR}/include/grpc/byte_buffer.h"
 	"${CMAKE_SOURCE_DIR}/include/grpc/byte_buffer_reader.h"
@@ -334,6 +357,7 @@ list(APPEND grpc_base_srcs
 	"${CMAKE_SOURCE_DIR}/src/core/surface/server.c"
 	"${CMAKE_SOURCE_DIR}/src/core/surface/server_chttp2.c"
 	"${CMAKE_SOURCE_DIR}/src/core/surface/server_create.c"
+	"${CMAKE_SOURCE_DIR}/src/core/surface/validate_metadata.c"
 	"${CMAKE_SOURCE_DIR}/src/core/surface/version.c"
 	"${CMAKE_SOURCE_DIR}/src/core/transport/byte_stream.c"
 	"${CMAKE_SOURCE_DIR}/src/core/transport/chttp2/alpn.c"
@@ -393,3 +417,199 @@ list(APPEND grpc_test_util_base_srcs
 	"${CMAKE_SOURCE_DIR}/test/core/util/port_windows.c"
 	"${CMAKE_SOURCE_DIR}/test/core/util/slice_splitter.c"
 	)
+
+list(APPEND filegroup_grpc_test_util_base
+	${grpc_test_util_base_headers}
+	${grpc_test_util_base_srcs})
+
+# ========================================================
+
+list(APPEND gpr_public_headers
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/alloc.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/atm.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/atm_gcc_atomic.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/atm_gcc_sync.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/atm_win32.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/avl.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/cmdline.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/cpu.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/histogram.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/host_port.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/log.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/log_win32.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/port_platform.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/slice.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/slice_buffer.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/string_util.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/subprocess.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/sync.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/sync_generic.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/sync_posix.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/sync_win32.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/thd.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/time.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/tls.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/tls_gcc.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/tls_msvc.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/tls_pthread.h"
+	"${CMAKE_SOURCE_DIR}/include/grpc/support/useful.h"
+	)
+
+list(APPEND gpr_headers
+	"${CMAKE_SOURCE_DIR}/src/core/profiling/timers.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/block_annotate.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/env.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/file.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/murmur_hash.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/stack_lockfree.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/string.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/string_win32.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/thd_internal.h"
+	"${CMAKE_SOURCE_DIR}/src/core/support/time_precise.h"
+	)
+
+list(APPEND gpr_srcs
+	"${CMAKE_SOURCE_DIR}/src/core/profiling/basic_timers.c"
+	"${CMAKE_SOURCE_DIR}/src/core/profiling/stap_timers.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/alloc.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/avl.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/cmdline.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/cpu_iphone.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/cpu_linux.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/cpu_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/cpu_windows.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/env_linux.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/env_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/env_win32.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/file.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/file_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/file_win32.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/histogram.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/host_port.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/log.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/log_android.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/log_linux.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/log_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/log_win32.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/murmur_hash.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/slice.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/slice_buffer.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/stack_lockfree.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/string.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/string_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/string_win32.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/subprocess_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/sync.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/sync_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/sync_win32.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/thd.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/thd_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/thd_win32.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/time.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/time_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/time_precise.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/time_win32.c"
+	"${CMAKE_SOURCE_DIR}/src/core/support/tls_pthread.c"
+  )
+
+list(APPEND filegroup_gpr
+	${gpr_public_headers}
+	${gpr_headers}
+	${gpr_srcs}
+	)
+
+# ========================================================
+
+list(APPEND gpr_test_util_headers
+	"${CMAKE_SOURCE_DIR}/test/core/util/test_config.h"
+	)
+
+list(APPEND gpr_test_util_srcs
+	"${CMAKE_SOURCE_DIR}/test/core/util/test_config.c"
+	)
+
+list(APPEND filegroup_gpr_test_util
+	${gpr_test_util_headers}
+	${gpr_test_util_srcs})
+
+# ========================================================
+
+list(APPEND grpc_public_headers
+	"${CMAKE_SOURCE_DIR}/include/grpc/grpc_security.h"
+	)
+
+list(APPEND grpc_headers
+	"${CMAKE_SOURCE_DIR}/src/core/security/auth_filters.h"
+	"${CMAKE_SOURCE_DIR}/src/core/security/base64.h"
+	"${CMAKE_SOURCE_DIR}/src/core/security/credentials.h"
+	"${CMAKE_SOURCE_DIR}/src/core/security/handshake.h"
+	"${CMAKE_SOURCE_DIR}/src/core/security/json_token.h"
+	"${CMAKE_SOURCE_DIR}/src/core/security/jwt_verifier.h"
+	"${CMAKE_SOURCE_DIR}/src/core/security/secure_endpoint.h"
+	"${CMAKE_SOURCE_DIR}/src/core/security/security_connector.h"
+	"${CMAKE_SOURCE_DIR}/src/core/security/security_context.h"
+	"${CMAKE_SOURCE_DIR}/src/core/tsi/fake_transport_security.h"
+	"${CMAKE_SOURCE_DIR}/src/core/tsi/ssl_transport_security.h"
+	"${CMAKE_SOURCE_DIR}/src/core/tsi/transport_security.h"
+	"${CMAKE_SOURCE_DIR}/src/core/tsi/transport_security_interface.h"
+	)
+
+list(APPEND grpc_srcs
+	"${CMAKE_SOURCE_DIR}/src/core/httpcli/httpcli_security_connector.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/base64.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/client_auth_filter.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/credentials.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/credentials_metadata.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/credentials_posix.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/credentials_win32.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/google_default_credentials.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/handshake.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/json_token.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/jwt_verifier.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/secure_endpoint.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/security_connector.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/security_context.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/server_auth_filter.c"
+	"${CMAKE_SOURCE_DIR}/src/core/security/server_secure_chttp2.c"
+	"${CMAKE_SOURCE_DIR}/src/core/surface/init_secure.c"
+	"${CMAKE_SOURCE_DIR}/src/core/surface/secure_channel_create.c"
+	"${CMAKE_SOURCE_DIR}/src/core/tsi/fake_transport_security.c"
+	"${CMAKE_SOURCE_DIR}/src/core/tsi/ssl_transport_security.c"
+	"${CMAKE_SOURCE_DIR}/src/core/tsi/transport_security.c"
+	)
+
+list(APPEND filegroup_grpc
+	${grpc_public_headers}
+	${grpc_headers}
+	${grpc_srcs}
+	${filegroup_grpc_base}
+	${filegroup_census})
+
+# ========================================================
+
+list(APPEND grpc_test_util_headers
+	"${CMAKE_SOURCE_DIR}/test/core/end2end/data/ssl_test_data.h"
+	"${CMAKE_SOURCE_DIR}/test/core/security/oauth2_utils.h"
+	)
+
+list(APPEND grpc_test_util_srcs
+	"${CMAKE_SOURCE_DIR}/test/core/end2end/data/server1_cert.c"
+	"${CMAKE_SOURCE_DIR}/test/core/end2end/data/server1_key.c"
+	"${CMAKE_SOURCE_DIR}/test/core/end2end/data/test_root_cert.c"
+	"${CMAKE_SOURCE_DIR}/test/core/security/oauth2_utils.c"
+	)
+
+list(APPEND filegroup_grpc_test_util
+	${grpc_test_util_headers}
+	${grpc_test_util_srcs}
+	${filegroup_grpc_test_util_base})
+
+# ========================================================
+
+list(APPEND grpc_unsecure_srcs
+	"${CMAKE_SOURCE_DIR}/src/core/surface/init_unsecure.c")
+
+list(APPEND filegroup_grpc_unsecure
+	${grpc_unsecure_srcs}
+	${filegroup_census}
+	${filegroup_grpc_base})
