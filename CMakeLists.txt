@@ -9,7 +9,8 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake")
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 option(BUILD_TESTS "Build tests" ON)
-option(ENABLE_ALPN "Enable ALPN" ON)
+option(GRPC_DISABLE_OPENSSL_ALPN "Disable openssl ALPN" OFF)
+option(GRPC_DISABLE_OPENSSL_INIT "Disable openssl init from this library (because some other library you link to is doing it)" OFF)
 if(MSVC)
 	OPTION(MSVC_LINK_STATIC_RUNTIME "Link with msvc static runtime" OFF)
 endif()
@@ -23,6 +24,7 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
 endif()
 
 if(BUILD_TESTS)
+	find_package(gtest REQUIRED CONFIG)
 	enable_testing()
 endif()
 
@@ -45,6 +47,9 @@ find_package(openssl REQUIRED CONFIG)
 find_package(zlib REQUIRED CONFIG)
 find_package(protobuf REQUIRED CONFIG)
 
+list(APPEND inc_dirs
+	"${CMAKE_BINARY_DIR}")
+
 ########
 
 if ("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
@@ -58,6 +63,12 @@ if(MSVC)
 	list(APPEND compile_definitions
 		_WIN32_WINNT=0x600) # windows vista
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244 /wd4267")
+endif()
+
+if(GRPC_DISABLE_OPENSSL_INIT)
+	message(STATUS "disabling init_openssl function in grpc")
+	list(APPEND compile_definitions
+		DISABLE_OPENSSL_INIT)
 endif()
 
 include(cmake/cmake_filegroups.cmake)

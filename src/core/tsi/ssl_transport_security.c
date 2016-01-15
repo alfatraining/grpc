@@ -130,6 +130,7 @@ static unsigned long openssl_thread_id_cb(void) {
 }
 
 static void init_openssl(void) {
+#ifndef DISABLE_OPENSSL_INIT
   int i;
   int num_locks;
   SSL_library_init();
@@ -144,6 +145,9 @@ static void init_openssl(void) {
   }
   CRYPTO_set_locking_callback(openssl_locking_cb);
   CRYPTO_set_id_callback(openssl_thread_id_cb);
+#else
+  gpr_log(GPR_INFO, "openssl init is disabled by build system");
+#endif
 }
 
 /* --- Ssl utils. ---*/

@@ -6,7 +6,7 @@ if(MSVC)
 		"/wd4267 /wd4244 /wd4090")
 endif()
 
-if(NOT ENABLE_ALPN)
+if(GRPC_DISABLE_OPENSSL_ALPN)
     list(APPEND compile_definitions
         TSI_OPENSSL_ALPN_SUPPORT=0)
 endif()

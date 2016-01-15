@@ -2,11 +2,13 @@
 # 	add_definitions("_CRT_SECURE_NO_WARNINGS")
 # endif()
 
+# ------------------------------------------------
+
 function(grpc_test test_name test_files)
 	add_executable(${test_name} ${test_files})
 	set_target_properties(${test_name} PROPERTIES
 		COMPILE_DEFINITIONS "${compile_definitions}")
-	target_link_libraries(${test_name} grpc_test_util)
+	target_link_libraries(${test_name} grpcpp_test_util grpc_test_util grpc++)
 
 	add_test(NAME ${test_name}
 		COMMAND ${test_name}
@@ -16,6 +18,15 @@ function(grpc_test test_name test_files)
 
 	set_property(TARGET ${test_name} PROPERTY FOLDER tests)
 endfunction()
+
+# ------------------------------------------------
+
+function(grpc_test_gtest test_name test_files)
+	grpc_test(${test_name} ${test_files})
+	target_link_libraries(${test_name} gtest)
+endfunction()
+
+# ------------------------------------------------
 
 function(grpc_util util_name util_file)
 	add_executable(${util_name} ${util_file})
@@ -91,7 +102,53 @@ grpc_test(murmur_hash_test "${grpc_SOURCE_DIR}/test/core/support/murmur_hash_tes
 # grpc_test(no_server_test "${grpc_SOURCE_DIR}/test/core/end2end/no_server_test.c")
 grpc_test(resolve_address_test "${grpc_SOURCE_DIR}/test/core/iomgr/resolve_address_test.c")
 grpc_test(sockaddr_utils_test "${grpc_SOURCE_DIR}/test/core/iomgr/sockaddr_utils_test.c")
+grpc_test(time_averaged_stats_test "${grpc_SOURCE_DIR}/test/core/iomgr/time_averaged_stats_test.c")
+grpc_test(timeout_encoding_test "${grpc_SOURCE_DIR}/test/core/transport/chttp2/timeout_encoding_test.c")
+grpc_test(timer_heap_test "${grpc_SOURCE_DIR}/test/core/iomgr/timer_heap_test.c")
+grpc_test(timer_list_test "${grpc_SOURCE_DIR}/test/core/iomgr/timer_list_test.c")
+grpc_test(timers_test "${grpc_SOURCE_DIR}/test/core/profiling/timers_test.c")
+grpc_test(transport_connectivity_state_test "${grpc_SOURCE_DIR}/test/core/transport/connectivity_state_test.c")
+grpc_test(transport_metadata_test "${grpc_SOURCE_DIR}/test/core/transport/metadata_test.c")
+grpc_test(uri_parser_test "${grpc_SOURCE_DIR}/test/core/client_config/uri_parser_test.c")
+grpc_test_gtest(auth_property_iterator_test "${grpc_SOURCE_DIR}/test/cpp/common/auth_property_iterator_test.cc")
 
+# fatal error C1083: Cannot open include file: 'test/cpp/util/echo.grpc.pb.h': No such file or directory
+# grpc_test_gtest(cli_call_test "${grpc_SOURCE_DIR}/test/cpp/util/cli_call_test.cc")
+
+# requires gflags
+# grpc_test_gtest(client_crash_test_server "${grpc_SOURCE_DIR}/test/cpp/end2end/client_crash_test_server.cc")
+
+grpc_test_gtest(credentials_test "${grpc_SOURCE_DIR}/test/cpp/client/credentials_test.cc")
+grpc_test_gtest(cxx_byte_buffer_test "${grpc_SOURCE_DIR}/test/cpp/util/byte_buffer_test.cc")
+grpc_test_gtest(cxx_slice_test "${grpc_SOURCE_DIR}/test/cpp/util/slice_test.cc")
+grpc_test_gtest(cxx_string_ref_test "${grpc_SOURCE_DIR}/test/cpp/util/string_ref_test.cc")
+grpc_test_gtest(cxx_time_test "${grpc_SOURCE_DIR}/test/cpp/util/time_test.cc")
+
+# fails on windows: E0115 12:16:51.391000000  7904 port_windows.c:90] socket() failed: No error
+# grpc_test_gtest(thread_stress_test "${grpc_SOURCE_DIR}/test/cpp/end2end/thread_stress_test.cc")
+
+# requires gflags
+# grpc_test_gtest(grpc_cli "${grpc_SOURCE_DIR}/test/cpp/util/grpc_cli.cc")
+
+# fatal error C1083: Cannot open include file: 'test/cpp/util/echo_duplicate.grpc.pb.h': No such file or directory
+# grpc_test_gtest(end2end_test "${grpc_SOURCE_DIR}/test/cpp/end2end/end2end_test.cc")
+
+# fatal error C1083: Cannot open include file: 'test/cpp/util/echo.grpc.pb.h': No such file or directory
+# grpc_test_gtest(generic_end2end_test "${grpc_SOURCE_DIR}/test/cpp/end2end/generic_end2end_test.cc")
+
+# this requires some grpc generated files and for some reason they are not in the repo
+# grpc_test_gtest(async_end2end_test "${grpc_SOURCE_DIR}/test/cpp/end2end/async_end2end_test.cc")
+
+# tests that should not compile/run on windows
+IF(NOT WIN32)
+	grpc_test(client_crash_test "${grpc_SOURCE_DIR}/test/cpp/end2end/client_crash_test.cc")
+	grpc_test(socket_utils_test "${grpc_SOURCE_DIR}/test/core/iomgr/socket_utils_test.c")
+	grpc_test(transport_security_test "${grpc_SOURCE_DIR}/test/core/tsi/transport_security_test.c")
+	grpc_test(udp_server_test "${grpc_SOURCE_DIR}/test/core/iomgr/udp_server_test.c")
+	grpc_test(async_streaming_ping_pong_test "${grpc_SOURCE_DIR}/test/cpp/qps/async_streaming_ping_pong_test.cc")
+	grpc_test(workqueue_test "${grpc_SOURCE_DIR}/test/core/iomgr/workqueue_test.c")
+	grpc_test(async_unary_ping_pong_test "${grpc_SOURCE_DIR}/test/cpp/qps/async_unary_ping_pong_test.cc")
+ENDIF()
 # GOOD GOD!!! Too many tests
 
 # secure_endpoint_test.exe: build_libs $(OUT_DIR)
