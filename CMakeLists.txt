@@ -2022,13 +2022,12 @@ endif()
 if (gRPC_INSTALL)
   install(EXPORT gRPCTargets
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
-    NAMESPACE gRPC::
-  )
+    NAMESPACE gRPC::)
 endif()
 
 foreach(_config gRPCConfig gRPCConfigVersion)
   configure_file(tools/cmake/${_config}.cmake.in
     ${_config}.cmake @ONLY)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_config}.cmake
-  )
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake)
 endforeach()
