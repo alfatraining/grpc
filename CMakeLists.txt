@@ -54,19 +54,9 @@ else()
   set(gRPC_INSTALL OFF CACHE BOOL "Generate installation target")
 endif()
 
-set(gRPC_ZLIB_PROVIDER "module" CACHE STRING "Provider of zlib library")
-set_property(CACHE gRPC_ZLIB_PROVIDER PROPERTY STRINGS "module" "package")
-
-set(gRPC_SSL_PROVIDER "module" CACHE STRING "Provider of ssl library")
-set_property(CACHE gRPC_SSL_PROVIDER PROPERTY STRINGS "module" "package")
-
-set(gRPC_PROTOBUF_PROVIDER "module" CACHE STRING "Provider of protobuf library")
-set_property(CACHE gRPC_PROTOBUF_PROVIDER PROPERTY STRINGS "module" "package")
-
 set(gRPC_USE_PROTO_LITE OFF CACHE BOOL "Use the protobuf-lite library")
 
 include(cmake/debug_postfix.cmake)
-include(cmake/package_config_mode.cmake)
 
 if (MSVC)
   add_definitions( -D_WIN32_WINNT=0x600 )
@@ -81,84 +71,39 @@ else()
   set(_gRPC_PROTOBUF_LIBRARY_NAME "libprotobuf")
 endif()
 
-if("${gRPC_ZLIB_PROVIDER}" STREQUAL "module")
-  if(NOT ZLIB_ROOT_DIR)
-    set(ZLIB_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib)
-  endif()
-  set(ZLIB_INCLUDE_DIR "${ZLIB_ROOT_DIR}")
-  if(EXISTS "${ZLIB_ROOT_DIR}/CMakeLists.txt")
-      add_subdirectory(${ZLIB_ROOT_DIR} third_party/zlib)
-      if(TARGET zlibstatic)
-          set(_gRPC_ZLIB_LIBRARIES zlibstatic)
-      endif()
-  else()
-      message(WARNING "gRPC_ZLIB_PROVIDER is \"module\" but ZLIB_ROOT_DIR is wrong")
-  endif()
-elseif("${gRPC_ZLIB_PROVIDER}" STREQUAL "package")
-  find_package(ZLIB REQUIRED ${_gRPC_ZLIB_PACKAGE_MODE})
-  if(TARGET ZLIB::ZLIB)
-    set(_gRPC_ZLIB_LIBRARIES ZLIB::ZLIB)
-  endif()
-  set(_gRPC_FIND_ZLIB "if(NOT ZLIB_FOUND)\n  find_package(ZLIB)\nendif()")
+#-------------- zlib ---------------
+
+find_package(ZLIB REQUIRED CONFIG)
+if(TARGET zlib)
+  set(_gRPC_ZLIB_LIBRARIES zlib)
 endif()
 
-if("${gRPC_PROTOBUF_PROVIDER}" STREQUAL "module")
-  # Building the protobuf tests require gmock what is not part of a standard protobuf checkout.
-  # Disable them unless they are explicitly requested from the cmake command line (when we assume
-  # gmock is downloaded to the right location inside protobuf).
-  if(NOT protobuf_BUILD_TESTS)
-    set(protobuf_BUILD_TESTS OFF CACHE BOOL "Build protobuf tests")
-  endif()
-  if(NOT PROTOBUF_ROOT_DIR)
-    set(PROTOBUF_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/protobuf)
-  endif()
-  if(EXISTS "${PROTOBUF_ROOT_DIR}/cmake/CMakeLists.txt")
-    set(protobuf_MSVC_STATIC_RUNTIME OFF CACHE BOOL "Link static runtime libraries")
-    add_subdirectory(${PROTOBUF_ROOT_DIR}/cmake third_party/protobuf)
-    if(TARGET ${_gRPC_PROTOBUF_LIBRARY_NAME})
-      set(_gRPC_PROTOBUF_LIBRARIES ${_gRPC_PROTOBUF_LIBRARY_NAME})
-    endif()
-    if(TARGET libprotoc)
-      set(_gRPC_PROTOBUF_PROTOC_LIBRARIES libprotoc)
-    endif()
-  else()
-      message(WARNING "gRPC_PROTOBUF_PROVIDER is \"module\" but PROTOBUF_ROOT_DIR is wrong")
-  endif()
-elseif("${gRPC_PROTOBUF_PROVIDER}" STREQUAL "package")
-  find_package(protobuf REQUIRED ${_gRPC_PROTOBUF_PACKAGE_MODE})
-  if(protobuf_FOUND)
-    if(TARGET protobuf::${_gRPC_PROTOBUF_LIBRARY_NAME})
-      set(_gRPC_PROTOBUF_LIBRARIES protobuf::${_gRPC_PROTOBUF_LIBRARY_NAME})
-    endif()
-    if(TARGET protobuf::libprotoc)
-      set(_gRPC_PROTOBUF_PROTOC_LIBRARIES protobuf::libprotoc)
-    endif()
-    set(_gRPC_FIND_PROTOBUF "if(NOT protobuf_FOUND)\n  find_package(protobuf CONFIG)\nendif()")
-  else()
-    find_package(Protobuf MODULE)
-    set(_gRPC_FIND_PROTOBUF "if(NOT Protobuf_FOUND)\n  find_package(Protobuf)\nendif()")
-  endif()
+#-------------- protobuf ---------------
+
+find_package(protobuf REQUIRED CONFIG)
+if(TARGET protobuf::${_gRPC_PROTOBUF_LIBRARY_NAME})
+  set(_gRPC_PROTOBUF_LIBRARIES protobuf::${_gRPC_PROTOBUF_LIBRARY_NAME})
+else()
+  message(FATAL "Target name 'protobuf::${_gRPC_PROTOBUF_LIBRARY_NAME}' not found inside package protobuf")
+endif()
+if(TARGET protobuf::libprotoc)
+  set(_gRPC_PROTOBUF_PROTOC_LIBRARIES protobuf::libprotoc)
+else()
+  message(FATAL "Target name 'protobuf::libprotoc' not found inside package protobuf")
 endif()
 
-if("${gRPC_SSL_PROVIDER}" STREQUAL "module")
-  if(NOT BORINGSSL_ROOT_DIR)
-    set(BORINGSSL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/boringssl)
-  endif()
-  if(EXISTS "${BORINGSSL_ROOT_DIR}/CMakeLists.txt")
-    add_subdirectory(${BORINGSSL_ROOT_DIR} third_party/boringssl)
-    if(TARGET ssl)
-      set(_gRPC_SSL_LIBRARIES ssl)
-    endif()
-  else()
-      message(WARNING "gRPC_SSL_PROVIDER is \"module\" but BORINGSSL_ROOT_DIR is wrong")
-  endif()
-elseif("${gRPC_SSL_PROVIDER}" STREQUAL "package")
-  find_package(OpenSSL REQUIRED ${_gRPC_SSL_PACKAGE_MODE})
-  if(TARGET OpenSSL::SSL)
-    set(_gRPC_SSL_LIBRARIES OpenSSL::SSL)
-  endif()
-  set(_gRPC_FIND_SSL "if(NOT OpenSSL_FOUND)\n  find_package(OpenSSL)\nendif()")
+#-------------- SSL ---------------
+
+find_package(OpenSSL REQUIRED CONFIG)
+if(NOT TARGET libeay32)
+  message(FATAL "Target name 'libeay32' not found inside package OpenSSL")
 endif()
+if(NOT TARGET ssleay32)
+  message(FATAL "Target name 'ssleay32' not found inside package OpenSSL")
+endif()
+list(APPEND _gRPC_SSL_LIBRARIES "libeay32" "ssleay32")
+
+#---------------------------------
 
 if(NOT MSVC)
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -std=c11")
@@ -170,10 +115,6 @@ if(WIN32 AND MSVC)
 endif()
 
 include(GNUInstallDirs)
-if(NOT DEFINED CMAKE_INSTALL_CMAKEDIR)
-  set(CMAKE_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/gRPC")
-endif()
-
 
 add_library(gpr
   src/core/lib/profiling/basic_timers.c
@@ -2080,7 +2021,6 @@ endif()
 
 if (gRPC_INSTALL)
   install(EXPORT gRPCTargets
-    DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
     NAMESPACE gRPC::
   )
 endif()
@@ -2089,6 +2029,5 @@ foreach(_config gRPCConfig gRPCConfigVersion)
   configure_file(tools/cmake/${_config}.cmake.in
     ${_config}.cmake @ONLY)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_config}.cmake
-    DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
   )
 endforeach()
