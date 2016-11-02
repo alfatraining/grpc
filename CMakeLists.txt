@@ -57,6 +57,7 @@ endif()
 set(gRPC_USE_PROTO_LITE OFF CACHE BOOL "Use the protobuf-lite library")
 
 include(cmake/debug_postfix.cmake)
+include(cmake/openssl_disable_init.cmake)
 
 if (MSVC)
   add_definitions( -D_WIN32_WINNT=0x600 )
