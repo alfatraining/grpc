@@ -2021,6 +2021,7 @@ endif()
 
 if (gRPC_INSTALL)
   install(EXPORT gRPCTargets
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
     NAMESPACE gRPC::
   )
 endif()
