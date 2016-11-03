@@ -172,6 +172,9 @@ target_include_directories(gpr
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+message(STATUS "include dir: ${CMAKE_INSTALL_INCLUDEDIR}")
+set_property(TARGET gpr PROPERTY
+  INTERFACE_INCLUDE_DIRECTORIES $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 foreach(_hdr
   include/grpc/support/alloc.h
@@ -1607,6 +1610,9 @@ target_link_libraries(grpc_csharp_ext
   gpr
 )
 
+set_property(TARGET ${_library}
+  PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 
 if (gRPC_INSTALL)
