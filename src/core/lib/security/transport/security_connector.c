@@ -523,16 +523,19 @@ static grpc_security_status ssl_check_peer(grpc_security_connector *sc,
                                            const tsi_peer *peer,
                                            grpc_auth_context **auth_context) {
   /* Check the ALPN. */
-  const tsi_peer_property *p =
-      tsi_peer_get_property_by_name(peer, TSI_SSL_ALPN_SELECTED_PROTOCOL);
-  if (p == NULL) {
-    gpr_log(GPR_ERROR, "Missing selected ALPN property.");
-    return GRPC_SECURITY_ERROR;
-  }
-  if (!grpc_chttp2_is_alpn_version_supported(p->value.data, p->value.length)) {
-    gpr_log(GPR_ERROR, "Invalid ALPN value.");
-    return GRPC_SECURITY_ERROR;
-  }
+  // [ks] - if we don't disable this code, we wont pass the check, because
+  // alpn is supported by our openssl on the client but not by our servers
+  // so this fails
+  // const tsi_peer_property *p =
+  //     tsi_peer_get_property_by_name(peer, TSI_SSL_ALPN_SELECTED_PROTOCOL);
+  // if (p == NULL) {
+  //   gpr_log(GPR_ERROR, "Missing selected ALPN property.");
+  //   return GRPC_SECURITY_ERROR;
+  // }
+  // if (!grpc_chttp2_is_alpn_version_supported(p->value.data, p->value.length)) {
+  //   gpr_log(GPR_ERROR, "Invalid ALPN value.");
+  //   return GRPC_SECURITY_ERROR;
+  // }
 
   /* Check the peer name if specified. */
   if (peer_name != NULL && !ssl_host_matches_name(peer, peer_name)) {
