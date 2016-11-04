@@ -53,6 +53,13 @@
 #include "src/core/lib/tsi/fake_transport_security.h"
 #include "src/core/lib/tsi/ssl_transport_security.h"
 
+/* Putting a macro like this and littering the source file with #if is really
+   bad practice.
+   TODO(jboeuf): refactor all the #if / #endif in a separate module. */
+#ifndef TSI_OPENSSL_ALPN_SUPPORT
+#define TSI_OPENSSL_ALPN_SUPPORT 1
+#endif
+
 /* -- Constants. -- */
 
 #ifndef INSTALL_PREFIX
@@ -522,6 +529,7 @@ static grpc_security_status ssl_check_peer(grpc_security_connector *sc,
                                            const char *peer_name,
                                            const tsi_peer *peer,
                                            grpc_auth_context **auth_context) {
+#if TSI_OPENSSL_ALPN_SUPPORT
   /* Check the ALPN. */
   const tsi_peer_property *p =
       tsi_peer_get_property_by_name(peer, TSI_SSL_ALPN_SELECTED_PROTOCOL);
@@ -533,7 +541,7 @@ static grpc_security_status ssl_check_peer(grpc_security_connector *sc,
     gpr_log(GPR_ERROR, "Invalid ALPN value.");
     return GRPC_SECURITY_ERROR;
   }
-
+#endif
   /* Check the peer name if specified. */
   if (peer_name != NULL && !ssl_host_matches_name(peer, peer_name)) {
     gpr_log(GPR_ERROR, "Peer name %s is not in peer certificate", peer_name);
