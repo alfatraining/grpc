@@ -58,6 +58,7 @@ set(gRPC_USE_PROTO_LITE OFF CACHE BOOL "Use the protobuf-lite library")
 
 include(cmake/debug_postfix.cmake)
 include(cmake/openssl_disable_init.cmake)
+include(cmake/disable_alpn.cmake)
 
 if (MSVC)
   add_definitions( -D_WIN32_WINNT=0x600 )
@@ -172,7 +173,6 @@ target_include_directories(gpr
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-message(STATUS "include dir: ${CMAKE_INSTALL_INCLUDEDIR}")
 set_property(TARGET gpr PROPERTY
   INTERFACE_INCLUDE_DIRECTORIES $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
