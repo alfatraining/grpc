@@ -75,7 +75,7 @@ endif()
 
 #-------------- zlib ---------------
 
-find_package(ZLIB REQUIRED CONFIG)
+find_package(zlib REQUIRED CONFIG)
 if(TARGET zlib)
   set(_gRPC_ZLIB_LIBRARIES zlib)
 endif()
