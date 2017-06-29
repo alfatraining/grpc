@@ -73,6 +73,12 @@ else()
   set(_gRPC_PROTOBUF_LIBRARY_NAME "libprotobuf")
 endif()
 
+if ("${CMAKE_SYSTEM}" MATCHES "Linux")
+  set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+  set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+  find_package(Threads REQUIRED)
+endif()
+
 #-------------- zlib ---------------
 
 find_package(zlib REQUIRED CONFIG)
@@ -451,6 +457,7 @@ target_include_directories(grpc
 )
 
 target_link_libraries(grpc
+  ${CMAKE_THREAD_LIBS_INIT}
   ${_gRPC_BASELIB_LIBRARIES}
   ${_gRPC_SSL_LIBRARIES}
   ${_gRPC_ZLIB_LIBRARIES}
