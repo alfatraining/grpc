@@ -103,7 +103,7 @@ endif()
 if(NOT TARGET ssleay32)
   message(FATAL "Target name 'ssleay32' not found inside package OpenSSL")
 endif()
-list(APPEND _gRPC_SSL_LIBRARIES "libeay32" "ssleay32")
+list(APPEND _gRPC_SSL_LIBRARIES ssleay32 libeay32)
 
 #---------------------------------
 
